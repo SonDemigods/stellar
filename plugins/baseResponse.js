@@ -9,7 +9,7 @@ module.exports = fp(async function (fastify, opts) {
       .code(200)
       .header('Content-Type', 'application/json; charset=utf-8')
       .send({ 
-        errorCode: data.status || 200, 
+        statusCode: data.status || 200, 
         response: data.data || null, 
         message: data.message || 'success'
       })
