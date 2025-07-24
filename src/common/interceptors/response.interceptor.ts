@@ -7,7 +7,7 @@ import {
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-export interface Response<T> {
+interface Response<T> {
   statusCode: number;
   message: string;
   response: T;
@@ -20,11 +20,15 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
     next: CallHandler,
   ): Observable<Response<T>> {
     return next.handle().pipe(
-      map((data) => ({
-        statusCode: context.switchToHttp().getResponse().statusCode,
-        message: '请求成功',
-        response: data,
-      })),
+      map((data: T) => {
+        const response: Response<T> = context.switchToHttp().getResponse();
+        const statusCode: number = response.statusCode || 200;
+        return {
+          statusCode,
+          message: '请求成功',
+          response: data,
+        };
+      }),
     );
   }
 }
