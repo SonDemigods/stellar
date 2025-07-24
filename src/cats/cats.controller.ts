@@ -9,6 +9,7 @@ import {
   Body,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { ResponseDto } from '@common/dto/response.dto';
 
 import {
   CreateCatDto,
@@ -16,8 +17,8 @@ import {
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from './dto/cat.dto';
-import { CatsService } from './cats.service';
+} from '@/cats/dto/cat.dto';
+import { CatsService } from '@/cats/cats.service';
 
 @Controller('cats')
 export class CatsController {
@@ -27,30 +28,35 @@ export class CatsController {
   ) {}
 
   @Get()
-  async findAll(@Query() queryCatDto: QueryCatDto): Promise<CatsResponseDto> {
+  async findAll(
+    @Query() queryCatDto: QueryCatDto,
+  ): Promise<CatsResponseDto | ResponseDto> {
     return this.catsService.findAll(queryCatDto);
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<CatResponseDto | null> {
+  async findOne(
+    @Param('id') id: number,
+  ): Promise<CatResponseDto | ResponseDto> {
     return this.catsService.findOne(id);
   }
 
   @Post()
-  async create(@Body() createCatDto: CreateCatDto): Promise<CatResponseDto> {
+  async create(
+    @Body() createCatDto: CreateCatDto,
+  ): Promise<CatResponseDto | ResponseDto> {
     return this.catsService.create(createCatDto);
   }
 
-  @Put(':id')
+  @Put()
   async update(
-    @Param('id') id: number,
     @Body() updateCatDto: UpdateCatDto,
-  ): Promise<CatResponseDto | null> {
-    return this.catsService.update(id, updateCatDto);
+  ): Promise<CatResponseDto | ResponseDto> {
+    return this.catsService.update(updateCatDto);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<any> {
+  async remove(@Param('id') id: number): Promise<CatResponseDto | ResponseDto> {
     return this.catsService.remove(id);
   }
 }

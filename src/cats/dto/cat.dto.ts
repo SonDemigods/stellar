@@ -11,29 +11,30 @@ import { Type } from 'class-transformer';
 
 // 创建数据传输对象
 export class CreateCatDto {
-  @IsString()
-  name?: string;
+  @IsNotEmpty({ message: '名称不能为空' })
+  @IsString({ message: '名称必须为字符串' })
+  name: string;
 
-  @IsInt()
+  @IsInt({ message: '年龄必须为数字' })
   age?: number;
 
-  @IsInt()
+  @IsInt({ message: '性别必须为数字' })
   sex?: number;
 }
 
 // 更新数据传输对象
 export class UpdateCatDto {
-  @IsNotEmpty()
-  @IsInt()
+  @IsNotEmpty({ message: 'id不能为空' })
+  @IsInt({ message: 'id必须为数字' })
   id: number;
 
   @IsString()
   name?: string;
 
-  @IsInt()
+  @IsInt({ message: '年龄必须为数字' })
   age?: number;
 
-  @IsInt()
+  @IsInt({ message: '性别必须为数字' })
   sex?: number;
 }
 
@@ -82,13 +83,13 @@ export class QueryCatDto {
 
   @Type(() => Number)
   @IsOptional()
-  @IsInt()
-  @Min(1)
+  @IsInt({ message: '分页必须为数字' })
+  @Min(1, { message: '分页必须大于1' })
   readonly pageNum?: number;
 
   @Type(() => Number)
   @IsOptional()
-  @IsInt()
-  @Min(1)
+  @IsInt({ message: '分页条数必须为数字' })
+  @Min(1, { message: '分页条数必须大于1' })
   readonly pageSize?: number;
 }

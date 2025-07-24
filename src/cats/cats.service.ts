@@ -1,6 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { ResponseDto } from '@common/dto/response.dto';
 
 import {
   CreateCatDto,
@@ -8,8 +10,8 @@ import {
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from './dto/cat.dto';
-import { Cat } from './entity/cat.entity';
+} from '@/cats/dto/cat.dto';
+import { Cat } from '@/cats/entity/cat.entity';
 
 @Injectable()
 export class CatsService {
@@ -44,12 +46,28 @@ export class CatsService {
   }
 
   // 根据ID查询
-  async findOne(id: number): Promise<CatResponseDto | null> {
-    return await this.catsRepository.findOneBy({ id });
+  async findOne(id: number): Promise<CatResponseDto | ResponseDto> {
+    const cat = await this.catsRepository.findOneBy({ id });
+    if (!cat) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: '查询失败，可能是数据不存在',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    return {
+      statusCode: 200,
+      message: '查询成功',
+      data: cat,
+    };
   }
 
   // 新增
-  async create(createCatDto: CreateCatDto): Promise<CatResponseDto> {
+  async create(
+    createCatDto: CreateCatDto,
+  ): Promise<CatResponseDto | ResponseDto> {
     const { name = '', age = 0, sex = 0 } = createCatDto;
     const cat = new Cat();
 
@@ -57,32 +75,62 @@ export class CatsService {
     cat.age = age;
     cat.sex = sex;
 
-    return this.catsRepository.save(cat);
+    const createdCat = await this.catsRepository.save(cat);
+
+    return {
+      statusCode: 201,
+      message: '创建成功',
+      data: createdCat,
+    };
   }
 
   // 更新
   async update(
-    id: number,
     updateCatDto: UpdateCatDto,
-  ): Promise<CatResponseDto | null> {
-    const { name = '', age = 0, sex = 0 } = updateCatDto;
+  ): Promise<CatResponseDto | ResponseDto> {
+    const { name = '', age = 0, sex = 0, id = 0 } = updateCatDto;
     const cat = new Cat();
 
+    cat.id = id;
     cat.name = name;
     cat.age = age;
     cat.sex = sex;
 
-    await this.catsRepository.update(id, cat);
-    return this.catsRepository.findOneBy({ id });
+    const { affected = 0 } = await this.catsRepository.update(id, cat);
+    if (affected === 0) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: '更新失败，可能是数据不存在',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
+    const updatedCat = await this.catsRepository.findOneBy({ id });
+    return {
+      statusCode: 200,
+      message: '更新成功',
+      data: updatedCat,
+    };
   }
 
   // 删除
-  async remove(id: number): Promise<any> {
-    const { raw = [], affected = 0 } = await this.catsRepository.delete(id);
+  async remove(id: number): Promise<CatResponseDto | ResponseDto> {
+    const { affected = 0 } = await this.catsRepository.delete(id);
     if (affected === 0) {
-      return { message: 'Cat not found' };
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: '删除失败，可能是数据不存在',
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    return raw;
+    return {
+      statusCode: 200,
+      message: '删除成功',
+      data: null,
+    };
   }
 }

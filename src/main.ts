@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 // 全局拦截器
-import { ResponseInterceptor } from './common/interceptors/response.interceptor';
+import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
 
 // 根模块
-import { AppModule } from './app.module';
+import { AppModule } from '@/app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   // 全局验证管道
