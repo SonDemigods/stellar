@@ -2,10 +2,12 @@ import {
   IsString,
   IsInt,
   IsArray,
-  IsNumberString,
   IsNotEmpty,
   IsOptional,
+  Min,
 } from 'class-validator';
+
+import { Type } from 'class-transformer';
 
 // 创建数据传输对象
 export class CreateCatDto {
@@ -68,19 +70,25 @@ export class QueryCatDto {
   @IsString()
   readonly name?: string;
 
+  @Type(() => Number)
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
   readonly age?: number;
 
+  @Type(() => Number)
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
   readonly sex?: number;
 
+  @Type(() => Number)
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
+  @Min(1)
   readonly pageNum?: number;
 
+  @Type(() => Number)
   @IsOptional()
-  @IsNumberString()
+  @IsInt()
+  @Min(1)
   readonly pageSize?: number;
 }
