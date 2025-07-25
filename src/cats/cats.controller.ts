@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   Body,
+  HttpCode,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ResponseDto } from '@common/dto/response.dto';
@@ -42,6 +43,7 @@ export class CatsController {
   }
 
   @Post()
+  @HttpCode(200)
   async create(
     @Body() createCatDto: CreateCatDto,
   ): Promise<CatResponseDto | ResponseDto> {
