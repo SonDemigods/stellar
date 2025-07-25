@@ -62,7 +62,7 @@ export class CatsResponseDto {
 
   @IsNotEmpty()
   @IsArray()
-  data: CatResponseDto[];
+  list: CatResponseDto[];
 }
 
 // 查询参数

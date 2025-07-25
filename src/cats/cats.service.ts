@@ -40,7 +40,7 @@ export class CatsService {
       take: pageSize,
     });
 
-    res.data = data;
+    res.list = data;
     res.total = total;
     return res;
   }
