@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 // 全局拦截器
-import { ResponseInterceptor } from '@common/interceptors/response.interceptor';
+import { ResponseInterceptor } from '@/common/interceptor/response.interceptor';
 
 // 根模块
 import { AppModule } from '@/app.module';
