@@ -18,8 +18,8 @@ import {
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from '@/cats/dto/cat.dto';
-import { CatsService } from '@/cats/cats.service';
+} from '@/module/cats/dto/cat.dto';
+import { CatsService } from '@/module/cats/cats.service';
 
 @Controller('cats')
 export class CatsController {

@@ -1,25 +1,47 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { Logger, PinoLogger } from 'nestjs-pino';
 
 // 全局拦截器
 import { ResponseInterceptor } from '@/common/interceptor/response.interceptor';
+import { LoggingInterceptor } from '@/common/interceptor/logger.interceptor';
 
 // 根模块
 import { AppModule } from '@/app.module';
+
+// 提供者
+import { LogService } from '@/module/log/log.service';
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bufferLogs: true,
+  });
+
+  app.useLogger(app.get(Logger));
+  app.flushLogs();
+
+  // 全局拦截器
+  app.useGlobalInterceptors(new ResponseInterceptor());
+  // 日志拦截器
+  const pinoLogger = await app.resolve(PinoLogger);
+  const logService = await app.resolve(LogService);
+  app.useGlobalInterceptors(new LoggingInterceptor(pinoLogger, logService));
+
   // 全局验证管道
   app.useGlobalPipes(
     new ValidationPipe({
-      transform: true, // 自动将参数转换为 DTO 中定义的类型
-      whitelist: true, // 自动过滤掉 DTO 中没有定义的字段
+      // 自动将参数转换为 DTO 中定义的类型
+      transform: true,
+      // 自动过滤掉 DTO 中没有定义的字段
+      whitelist: true,
+      // 禁止非白名单字段
       forbidNonWhitelisted: false,
+      // 禁止空值
       disableErrorMessages: false,
     }),
   );
-  // 全局拦截器
-  app.useGlobalInterceptors(new ResponseInterceptor());
 
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.APP_PORT ?? 3000);
 }
+
 void bootstrap();

@@ -3,15 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { ResponseDto } from '@common/dto/response.dto';
-
 import {
   CreateCatDto,
   UpdateCatDto,
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from '@/cats/dto/cat.dto';
-import { Cat } from '@/cats/entity/cat.entity';
+} from '@/module/cats/dto/cat.dto';
+
+import { Cat } from '@/module/cats/entity/cat.entity';
 
 @Injectable()
 export class CatsService {
