@@ -13,6 +13,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       username: this.configService.get<string>('database.username', 'root'),
       password: this.configService.get<string>('database.password', '123456'),
       database: this.configService.get<string>('database.database', 'stellar'),
+      timezone: this.configService.get<string>('database.timezone', '+08:00'),
       autoLoadEntities: true,
       synchronize:
         this.configService.get<string>('app.env', 'development') ===
