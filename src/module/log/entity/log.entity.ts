@@ -19,6 +19,8 @@ export class Log {
   @Column('json', { nullable: true })
   meta: any;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: 'timestamp',
+  })
   timestamp: Date;
 }

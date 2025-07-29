@@ -9,6 +9,8 @@ import { tap } from 'rxjs/operators';
 import { PinoLogger } from 'nestjs-pino';
 import { Request, Response } from 'express';
 
+import { LoggerConfig } from '@/config/logger.config';
+
 import { LogService } from '@/module/log/log.service';
 
 @Injectable()
@@ -23,6 +25,14 @@ export class LoggingInterceptor implements NestInterceptor {
     // 修复：显式声明 request 和 response 的类型
     const request: Request = context.switchToHttp().getRequest<Request>();
     const response: Response = context.switchToHttp().getResponse<Response>();
+
+    const { path } = request;
+
+    // 过滤特定路径，不记录日志
+    const { excludedPaths = [] } = LoggerConfig;
+    if (excludedPaths.includes(path)) {
+      return next.handle();
+    }
 
     const { method, url, params, query } = request;
     const body: Record<string, any> = request.body as Record<string, any>;
