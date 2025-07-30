@@ -12,7 +12,7 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
       port: this.configService.get<number>('database.port', 3306),
       username: this.configService.get<string>('database.username', 'root'),
       password: this.configService.get<string>('database.password', '123456'),
-      database: this.configService.get<string>('database.database', 'stellar'),
+      database: this.configService.get<string>('database.database', 'galaxy'),
       timezone: this.configService.get<string>('database.timezone', '+08:00'),
       autoLoadEntities: true,
       synchronize:
