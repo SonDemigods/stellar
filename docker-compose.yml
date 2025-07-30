@@ -7,6 +7,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 123456
       MYSQL_DATABASE: stellar
+      TZ: Asia/Shanghai
+    command: [--default-time-zone='+08:00']
     ports:
       - "3306:3306"
     volumes:
