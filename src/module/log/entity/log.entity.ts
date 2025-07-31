@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@Entity({ name: 'log' })
+@Entity({ name: 'star_log' })
 export class Log {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -16,11 +16,11 @@ export class Log {
   @Column('text')
   message: string;
 
-  @Column('json', { nullable: true })
+  @Column('json')
   meta: any;
 
   @CreateDateColumn({
-    type: 'timestamp',
+    type: 'datetime',
   })
   timestamp: Date;
 }
