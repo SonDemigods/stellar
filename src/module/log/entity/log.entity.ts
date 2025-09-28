@@ -10,17 +10,26 @@ export class Log {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', name: 'level', length: 10 })
   level: string;
 
-  @Column('text')
+  @Column({ type: 'text', name: 'message' })
   message: string;
 
-  @Column('json')
+  @Column({ type: 'json', name: 'meta' })
   meta: any;
 
   @CreateDateColumn({
     type: 'datetime',
+    name: 'create_time',
   })
-  timestamp: Date;
+  createTime: Date;
+
+  @Column({
+    type: 'varchar',
+    name: 'create_user_id',
+    length: 36,
+    default: '0',
+  })
+  createUserId: string;
 }

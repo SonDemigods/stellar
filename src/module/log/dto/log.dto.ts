@@ -26,7 +26,10 @@ export class LogResponseDto {
   meta: string;
 
   @IsDate()
-  timestamp: Date;
+  createTime: Date;
+
+  @IsString()
+  createUserId: string;
 }
 
 // 列表响应数据
