@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { LoggerModule, Params } from 'nestjs-pino';
+import { LoggerModule } from 'nestjs-pino';
 import { loggerOptions } from '@config/logger.config';
 
 // 配置模块
@@ -11,6 +11,7 @@ import { TypeOrmConfigService } from '@/config/typeOrm.config';
 
 // 应用模块
 import { LogModule } from '@/module/log/log.module';
+import { OrganizationModule } from '@/module/organization/organization.module';
 import { CatsModule } from '@/module/cats/cats.module';
 
 @Module({
@@ -20,8 +21,9 @@ import { CatsModule } from '@/module/cats/cats.module';
       imports: [ConfigModule],
       useClass: TypeOrmConfigService,
     }),
-    LoggerModule.forRoot(loggerOptions as Params),
+    LoggerModule.forRoot(loggerOptions),
     LogModule,
+    OrganizationModule,
     CatsModule,
   ],
   controllers: [],
