@@ -3,7 +3,7 @@ import { join } from 'path';
 
 // 日志文件路径
 const logsDir = join(__dirname, '../../logs');
-const logFilePath = join(logsDir, 'app.log');
+const logFilePath = join(logsDir, 'app');
 
 export const LoggerConfig = {
   // 日志级别
@@ -22,6 +22,8 @@ export const loggerOptions: Params = {
           options: {
             // 日志文件路径
             file: logFilePath,
+            // 文件扩展名
+            extension: '.log',
             // 每个日志文件的大小
             size: '10M',
             // 日志文件的滚动频率
@@ -36,6 +38,23 @@ export const loggerOptions: Params = {
             dateFormat: 'yyyy-MM-dd',
             // 追加模式
             append: true,
+          },
+          level: LoggerConfig.level || 'info',
+        },
+        {
+          // 控制台输出配置
+          target: 'pino-pretty',
+          options: {
+            // 启用彩色输出
+            colorize: true,
+            // 格式化时间戳
+            translateTime: 'SYS:yyyy-mm-dd HH:MM:ss.l',
+            // 显示级别标签
+            levelFirst: true,
+            // 隐藏进程ID
+            ignore: 'pid,hostname',
+            // 缩进日志对象
+            singleLine: false,
           },
           level: LoggerConfig.level || 'info',
         },
