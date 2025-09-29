@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 
@@ -39,13 +39,11 @@ export class LogService {
   async findOne(id: string): Promise<LogResponseDto | ResponseDto> {
     const log = await this.logRepository.findOneBy({ id });
     if (!log) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: '查询失败，可能是数据不存在',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      // 使用标准的NOT_FOUND异常表示资源不存在
+      throw new NotFoundException({
+        statusCode: 404,
+        message: '查询失败，数据不存在',
+      });
     }
     return {
       statusCode: 200,

@@ -52,7 +52,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap({
-        next: (data) => {
+        next: (data: unknown) => {
           // 响应时间
           const endTime = Date.now();
           const duration = endTime - startTime;
@@ -66,8 +66,8 @@ export class LoggingInterceptor implements NestInterceptor {
             duration: `${duration}ms`,
             data:
               typeof data === 'object' && data !== null
-                ? (data as Record<string, any>)
-                : { result: data as Record<string, any> },
+                ? data
+                : { result: String(data) },
           };
 
           // 记录响应信息
@@ -98,12 +98,12 @@ export class LoggingInterceptor implements NestInterceptor {
             method,
             url,
             error: {
-              name: error.name,
               message: error.message,
               stack: error.stack,
+              name: error.name,
               status: 500,
+              errorTime: endTime,
             },
-            duration: `${duration}ms`,
           };
 
           // 记录错误信息

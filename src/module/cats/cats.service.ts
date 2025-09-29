@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -49,13 +49,11 @@ export class CatsService {
   async findOne(id: number): Promise<CatResponseDto | ResponseDto> {
     const cat = await this.catsRepository.findOneBy({ id });
     if (!cat) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: '查询失败，可能是数据不存在',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      // 使用标准的NOT_FOUND异常表示资源不存在
+      throw new NotFoundException({
+        statusCode: 404,
+        message: '查询失败，数据不存在',
+      });
     }
     return {
       statusCode: 200,
@@ -98,13 +96,11 @@ export class CatsService {
 
     const { affected = 0 } = await this.catsRepository.update(id, cat);
     if (affected === 0) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: '更新失败，可能是数据不存在',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      // 使用标准的NOT_FOUND异常表示资源不存在
+      throw new NotFoundException({
+        statusCode: 404,
+        message: '更新失败，数据不存在',
+      });
     }
     const updatedCat = await this.catsRepository.findOneBy({ id });
     return {
@@ -118,13 +114,11 @@ export class CatsService {
   async remove(id: number): Promise<CatResponseDto | ResponseDto> {
     const { affected = 0 } = await this.catsRepository.delete(id);
     if (affected === 0) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: '删除失败，可能是数据不存在',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      // 使用标准的NOT_FOUND异常表示资源不存在
+      throw new NotFoundException({
+        statusCode: 404,
+        message: '删除失败，数据不存在',
+      });
     }
 
     return {
