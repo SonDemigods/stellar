@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "command": "npm run dev",
+            "command": "npm run start:dev",
             "name": "启动调试",
             "request": "launch",
             "type": "node-terminal"
