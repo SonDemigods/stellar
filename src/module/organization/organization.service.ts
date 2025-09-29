@@ -1,6 +1,7 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ResponseDto } from '@common/dto/response.dto';
 import {
@@ -66,7 +67,8 @@ export class OrganizationService {
     const [data = [], total = 0] =
       await this.organizationRepository.findAndCount({
         where: {
-          name: keyword ? `%${keyword}%` : undefined,
+          deleteFlag: 0,
+          name: keyword ? Like(`%${keyword}%`) : undefined,
         },
       });
 
@@ -105,6 +107,8 @@ export class OrganizationService {
     } = createOrganizationDto;
     const organization = new Organization();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+    organization.id = uuidv4();
     organization.name = name;
     organization.organizationCode = organizationCode;
     organization.parentId = parentId;

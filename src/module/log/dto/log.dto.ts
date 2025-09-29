@@ -27,8 +27,7 @@ export class LogResponseDto {
   message: string;
 
   @ApiProperty({ example: '{"userId":"1"}', description: '元数据' })
-  @IsString()
-  meta: string;
+  meta: Record<string, any>;
 
   @ApiProperty({ example: '2024-01-01T10:00:00.000Z', description: '创建时间' })
   @IsDate()

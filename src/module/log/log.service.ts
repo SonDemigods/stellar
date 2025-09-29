@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ResponseDto } from '@common/dto/response.dto';
 import {
@@ -59,9 +60,11 @@ export class LogService {
     meta?: Record<string, any>,
   ): Promise<Log> {
     const log = this.logRepository.create({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+      id: uuidv4(),
       level,
       message,
-      meta,
+      meta: meta || {},
     });
     return this.logRepository.save(log);
   }

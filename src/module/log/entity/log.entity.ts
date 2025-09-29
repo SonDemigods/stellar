@@ -1,13 +1,8 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
 
 @Entity({ name: 'star_log' })
 export class Log {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', name: 'id' })
   id: string;
 
   @Column({ type: 'varchar', name: 'level', length: 10 })
@@ -16,8 +11,8 @@ export class Log {
   @Column({ type: 'text', name: 'message' })
   message: string;
 
-  @Column({ type: 'json', name: 'meta' })
-  meta: any;
+  @Column({ type: 'jsonb', name: 'meta' })
+  meta: Record<string, any>;
 
   @CreateDateColumn({
     type: 'timestamp',
