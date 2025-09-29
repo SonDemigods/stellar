@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger, PinoLogger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 // 全局拦截器
 import { ResponseInterceptor } from '@/common/interceptor/response.interceptor';
@@ -46,8 +47,22 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<number>('app.port', 3000);
 
+  // 配置 Swagger 文档
+  const config = new DocumentBuilder()
+    .setTitle(configService.get<string>('app.cName') || '未知')
+    .setDescription('API 接口文档')
+    .setVersion(configService.get<string>('app.version') || '1.0.0')
+    .addBearerAuth()
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-docs', app, document);
+
   await app.listen(port);
-  console.log(`森罗万象已启动，监听端口:${port}`);
+  console.log(
+    `${configService.get<string>('app.cName')}已启动，监听端口:${port}`,
+  );
+  console.log(`Swagger 文档地址: http://localhost:${port}/api-docs`);
 }
 
 void bootstrap();
