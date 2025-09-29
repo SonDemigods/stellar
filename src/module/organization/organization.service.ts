@@ -23,13 +23,13 @@ export class OrganizationService {
 
   private buildTree(
     organizationList: Organization[],
-    parentId: string,
+    parentId: string | null,
   ): OrganizationTreeResponseDto[] {
     return organizationList
       .filter((organization) => {
-        if (parentId === 'root') {
-          // 根节点：parent_id 为 'root'
-          return organization.parentId === 'root';
+        if (parentId === null) {
+          // 根节点：parent_id 为 null
+          return organization.parentId === null;
         } else {
           // 子节点：parent_id 等于当前 parentId
           return organization.parentId === parentId;
@@ -52,7 +52,7 @@ export class OrganizationService {
         deleteFlag: 0,
       },
     });
-    const res = this.buildTree(organizationList, 'root');
+    const res = this.buildTree(organizationList, null);
 
     return res;
   }
