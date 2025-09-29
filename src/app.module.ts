@@ -16,7 +16,18 @@ import { CatsModule } from '@/module/cats/cats.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ load: [appConfig, databaseConfig] }),
+    // 配置 ConfigModule，使其在所有模块中可用，并加载所有配置
+    ConfigModule.forRoot({
+      // 加载应用配置和数据库配置
+      load: [appConfig, databaseConfig],
+      // 使配置在所有模块中可用
+      isGlobal: true,
+      // 指定环境变量文件路径
+      envFilePath: '.env',
+      // 启用配置缓存以提高性能
+      cache: true,
+    }),
+    // 配置 TypeOrmModule，使用异步配置服务
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useClass: TypeOrmConfigService,

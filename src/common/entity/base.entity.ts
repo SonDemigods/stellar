@@ -11,7 +11,7 @@ export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn({ type: 'datetime', name: 'create_time' })
+  @CreateDateColumn({ type: 'timestamp', name: 'create_time' })
   createTime: Date;
 
   @Column({
@@ -22,7 +22,7 @@ export abstract class BaseEntity {
   })
   createUserId: string;
 
-  @UpdateDateColumn({ type: 'datetime', name: 'update_time' })
+  @UpdateDateColumn({ type: 'timestamp', name: 'update_time' })
   updateTime: Date;
 
   @Column({
@@ -33,6 +33,6 @@ export abstract class BaseEntity {
   })
   updateUserId: string;
 
-  @Column({ type: 'tinyint', name: 'delete_flag', default: 0 })
+  @Column({ type: 'int', name: 'delete_flag', default: 0 })
   deleteFlag: number;
 }

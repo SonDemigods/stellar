@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger, PinoLogger } from 'nestjs-pino';
+import { ConfigService } from '@nestjs/config';
 
 // 全局拦截器
 import { ResponseInterceptor } from '@/common/interceptor/response.interceptor';
@@ -41,7 +42,12 @@ async function bootstrap() {
     }),
   );
 
-  await app.listen(process.env.APP_PORT ?? 3000);
+  // 使用配置服务获取端口
+  const configService = app.get(ConfigService);
+  const port = configService.get<number>('app.port', 3000);
+
+  await app.listen(port);
+  console.log(`森罗万象已启动，监听端口:${port}`);
 }
 
 void bootstrap();

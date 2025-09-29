@@ -20,7 +20,7 @@ export class Log {
   meta: any;
 
   @CreateDateColumn({
-    type: 'datetime',
+    type: 'timestamp',
     name: 'create_time',
   })
   createTime: Date;
