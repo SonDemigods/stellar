@@ -56,13 +56,13 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   await app.listen(port);
   console.log(
     `${configService.get<string>('app.cName')}已启动，监听端口:${port}`,
   );
-  console.log(`Swagger 文档地址: http://localhost:${port}/api-docs`);
+  console.log(`Swagger 文档地址: http://localhost:${port}/docs`);
 }
 
 void bootstrap();
