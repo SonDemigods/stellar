@@ -59,10 +59,11 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   await app.listen(port);
-  console.log(
-    `${configService.get<string>('app.cName')}已启动，监听端口:${port}`,
-  );
-  console.log(`Swagger 文档地址: http://localhost:${port}/docs`);
+
+  // 输出启动信息
+  console.log(`${configService.get<string>('app.cName')}已启动`);
+  console.log(`文档地址: http://localhost:${port}/docs`);
+  console.log(`本地地址: http://localhost:${port}`);
 }
 
 void bootstrap();
