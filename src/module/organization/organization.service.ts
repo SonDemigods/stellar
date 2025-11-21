@@ -11,9 +11,9 @@ import {
   OrganizationListResponseDto,
   OrganizationResponseDto,
   QueryOrganizationDto,
-} from '@/module/organization/dto/organization.dto';
+} from './dto/organization.dto';
 
-import { Organization } from '@/module/organization/entity/organization.entity';
+import { Organization } from './entity/organization.entity';
 
 @Injectable()
 export class OrganizationService {
@@ -107,7 +107,6 @@ export class OrganizationService {
     } = createOrganizationDto;
     const organization = new Organization();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     organization.id = uuidv4();
     organization.name = name;
     organization.organizationCode = organizationCode;

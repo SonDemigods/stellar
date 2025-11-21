@@ -26,8 +26,8 @@ import {
   OrganizationListResponseDto,
   OrganizationResponseDto,
   QueryOrganizationDto,
-} from '@/module/organization/dto/organization.dto';
-import { OrganizationService } from '@/module/organization/organization.service';
+} from './dto/organization.dto';
+import { OrganizationService } from './organization.service';
 
 @ApiTags('组织管理')
 @Controller('organization')
