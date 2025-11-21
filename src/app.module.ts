@@ -1,25 +1,41 @@
 import { Module } from '@nestjs/common';
+// 配置模块
 import { ConfigModule } from '@nestjs/config';
+// TypeORM 模块
 import { TypeOrmModule } from '@nestjs/typeorm';
+// 日志模块
 import { LoggerModule } from 'nestjs-pino';
+// 日志配置
 import { loggerOptions } from '@config/logger.config';
 
-// 配置模块
+// 应用配置
 import appConfig from '@/config/app.config';
+// 数据库配置
 import databaseConfig from '@/config/database.config';
-import { TypeOrmConfigService } from '@/config/typeOrm.config';
+// TypeORM 配置服务
+import { TypeOrmConfigService } from '@/common/typeOrm/typeOrm.service';
+// 缓存配置
+import cacheConfig from '@/config/cache.config';
+// 缓存配置服务
+import { CacheConfigService } from '@/common/cache/cache.service';
 
-// 应用模块
+// 日志模块
 import { LogModule } from '@/module/log/log.module';
-import { OrganizationModule } from '@/module/organization/organization.module';
+// 缓存模块
+import { CacheModule } from '@nestjs/cache-manager';
+// 猫模块
 import { CatsModule } from '@/module/cats/cats.module';
+// 组织机构模块
+import { OrganizationModule } from '@/module/organization/organization.module';
+// 用户模块
+import { UserModule } from '@/module/user/user.module';
 
 @Module({
   imports: [
     // 配置 ConfigModule，使其在所有模块中可用，并加载所有配置
     ConfigModule.forRoot({
-      // 加载应用配置和数据库配置
-      load: [appConfig, databaseConfig],
+      // 加载应用配置、数据库配置、缓存配置
+      load: [appConfig, databaseConfig, cacheConfig],
       // 使配置在所有模块中可用
       isGlobal: true,
       // 指定环境变量文件路径
@@ -34,8 +50,13 @@ import { CatsModule } from '@/module/cats/cats.module';
     }),
     LoggerModule.forRoot(loggerOptions),
     LogModule,
+    CacheModule.registerAsync({
+      useClass: CacheConfigService,
+    }),
+    CacheModule,
     OrganizationModule,
     CatsModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
