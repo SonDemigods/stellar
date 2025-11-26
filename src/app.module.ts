@@ -18,6 +18,8 @@ import { TypeOrmConfigService } from '@/common/typeOrm/typeOrm.service';
 import cacheConfig from '@/config/cache.config';
 // 缓存配置服务
 import { CacheConfigService } from '@/common/cache/cache.service';
+// 查询配置
+import searchConfig from '@/config/search.config';
 
 // 日志模块
 import { LogModule } from '@/module/log/log.module';
@@ -29,13 +31,15 @@ import { CatsModule } from '@/module/cats/cats.module';
 import { OrganizationModule } from '@/module/organization/organization.module';
 // 用户模块
 import { UserModule } from '@/module/user/user.module';
+// 搜索模块
+import { SearchModule } from '@/common/search/search.module';
 
 @Module({
   imports: [
     // 配置 ConfigModule，使其在所有模块中可用，并加载所有配置
     ConfigModule.forRoot({
-      // 加载应用配置、数据库配置、缓存配置
-      load: [appConfig, databaseConfig, cacheConfig],
+      // 加载应用配置、数据库配置、缓存配置、搜索配置
+      load: [appConfig, databaseConfig, cacheConfig, searchConfig],
       // 使配置在所有模块中可用
       isGlobal: true,
       // 指定环境变量文件路径
@@ -54,6 +58,7 @@ import { UserModule } from '@/module/user/user.module';
       useClass: CacheConfigService,
     }),
     CacheModule,
+    SearchModule,
     OrganizationModule,
     CatsModule,
     UserModule,
