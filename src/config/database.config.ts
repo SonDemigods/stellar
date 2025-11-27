@@ -1,14 +1,13 @@
 import { registerAs } from '@nestjs/config';
 
 export default registerAs('database', () => {
-  // 确保端口号被正确转换为数字类型
-  const port = process.env.DATABASE_PORT
-    ? parseInt(process.env.DATABASE_PORT, 10)
-    : 5432;
-
   // 验证必要的环境变量
   if (!process.env.DATABASE_HOST) {
     throw new Error('数据库主机地址未配置');
+  }
+
+  if (!process.env.DATABASE_PORT) {
+    throw new Error('数据库端口未配置');
   }
 
   if (!process.env.DATABASE_USER) {
@@ -25,7 +24,9 @@ export default registerAs('database', () => {
 
   return {
     host: process.env.DATABASE_HOST,
-    port,
+    port: process.env.DATABASE_PORT
+      ? parseInt(process.env.DATABASE_PORT, 10)
+      : 5432,
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     database: process.env.DATABASE_NAME,
