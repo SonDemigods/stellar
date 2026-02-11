@@ -35,8 +35,8 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# IDE - Tare
-.tare
+# IDE - Trae
+.trae/*
 
 # dotenv environment variable files
 # .env
