@@ -9,9 +9,9 @@ import {
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from '@/module/cats/dto/cat.dto';
+} from './dto/cat.dto';
 
-import { Cat } from '@/module/cats/entity/cat.entity';
+import { Cat } from './entity/cat.entity';
 
 @Injectable()
 export class CatsService {

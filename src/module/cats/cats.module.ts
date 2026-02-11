@@ -3,11 +3,11 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 // 实体类
-import { Cat } from '@/module/cats/entity/cat.entity';
+import { Cat } from './entity/cat.entity';
 
 // 控制器和服务
-import { CatsController } from '@/module/cats/cats.controller';
-import { CatsService } from '@/module/cats/cats.service';
+import { CatsController } from './cats.controller';
+import { CatsService } from './cats.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Cat]), ConfigModule],

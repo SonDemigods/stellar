@@ -25,8 +25,8 @@ import {
   CatResponseDto,
   CatsResponseDto,
   QueryCatDto,
-} from '@/module/cats/dto/cat.dto';
-import { CatsService } from '@/module/cats/cats.service';
+} from './dto/cat.dto';
+import { CatsService } from './cats.service';
 
 @ApiTags('猫咪管理')
 @Controller('cats')
