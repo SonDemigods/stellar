@@ -117,14 +117,14 @@ export class QueryCatDto {
   @ApiProperty({ example: 1, description: '页码', required: false })
   @Type(() => Number)
   @IsOptional()
-  @IsInt({ message: '分页必须为数字' })
-  @Min(1, { message: '分页必须大于1' })
+  @IsInt({ message: '页码必须为整数' })
+  @Min(1, { message: '页码必须大于等于1' })
   readonly pageNum?: number;
 
   @ApiProperty({ example: 10, description: '每页条数', required: false })
   @Type(() => Number)
   @IsOptional()
-  @IsInt({ message: '分页条数必须为数字' })
-  @Min(1, { message: '分页条数必须大于1' })
+  @IsInt({ message: '每页数量必须是整数' })
+  @Min(1, { message: '每页数量必须大于等于1' })
   readonly pageSize?: number;
 }
