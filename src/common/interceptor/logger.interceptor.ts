@@ -81,11 +81,9 @@ export class LoggingInterceptor implements NestInterceptor {
             .createLog(
               'info',
               `Outgoing Response: ${method} ${url}`,
-              responseLog,
+              JSON.stringify(responseLog),
             )
-            .catch((err) =>
-              this.logger.error('Failed to save response log', err),
-            );
+            .catch((err) => this.logger.error('未能保存响应日志', err));
         },
         error: (error: Error) => {
           // 错误时间
@@ -114,10 +112,12 @@ export class LoggingInterceptor implements NestInterceptor {
 
           // 存储错误日志到数据库
           this.logService
-            .createLog('error', `Request Error: ${method} ${url}`, errorLog)
-            .catch((err) =>
-              this.logger.error('Failed to save response log', err),
-            );
+            .createLog(
+              'error',
+              `Request Error: ${method} ${url}`,
+              JSON.stringify(errorLog),
+            )
+            .catch((err) => this.logger.error('未能保存错误日志', err));
         },
       }),
     );
