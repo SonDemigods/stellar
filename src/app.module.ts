@@ -20,26 +20,28 @@ import cacheConfig from '@/config/cache.config';
 import { CacheConfigService } from '@/common/cache/cache.service';
 // 查询配置
 import searchConfig from '@/config/search.config';
+// MinIO配置
+import minioConfig from '@/config/minio.config';
 
 // 日志模块
 import { LogModule } from '@/module/log/log.module';
 // 缓存模块
 import { CacheModule } from '@nestjs/cache-manager';
-// 猫模块
-import { CatsModule } from '@/module/cats/cats.module';
+// 搜索模块
+import { SearchModule } from '@/common/search/search.module';
+// 附件模块
+import { AttachmentModule } from '@/module/attachment/attachment.module';
 // 组织机构模块
 import { OrganizationModule } from '@/module/organization/organization.module';
 // 用户模块
 import { UserModule } from '@/module/user/user.module';
-// 搜索模块
-import { SearchModule } from '@/common/search/search.module';
 
 @Module({
   imports: [
     // 配置 ConfigModule，使其在所有模块中可用，并加载所有配置
     ConfigModule.forRoot({
-      // 加载应用配置、数据库配置、缓存配置、搜索配置
-      load: [appConfig, databaseConfig, cacheConfig, searchConfig],
+      // 加载应用配置、数据库配置、缓存配置、搜索配置、MinIO配置
+      load: [appConfig, databaseConfig, cacheConfig, searchConfig, minioConfig],
       // 使配置在所有模块中可用
       isGlobal: true,
       // 指定环境变量文件路径
@@ -57,10 +59,9 @@ import { SearchModule } from '@/common/search/search.module';
     CacheModule.registerAsync({
       useClass: CacheConfigService,
     }),
-    CacheModule,
     SearchModule,
+    AttachmentModule,
     OrganizationModule,
-    CatsModule,
     UserModule,
   ],
   controllers: [],

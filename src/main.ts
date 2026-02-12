@@ -4,6 +4,9 @@ import { Logger, PinoLogger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
+// 数据库异常过滤器
+import { DatabaseExceptionFilter } from '@/common/filter/database-exception.filter';
+
 // 全局拦截器
 import { ResponseInterceptor } from '@/common/interceptor/response.interceptor';
 import { LoggingInterceptor } from '@/common/interceptor/logger.interceptor';
@@ -21,6 +24,9 @@ async function bootstrap() {
 
   app.useLogger(app.get(Logger));
   app.flushLogs();
+
+  // 数据库异常过滤器
+  app.useGlobalFilters(new DatabaseExceptionFilter());
 
   // 全局拦截器
   app.useGlobalInterceptors(new ResponseInterceptor());
