@@ -12,7 +12,7 @@
  Target Server Version : 150014 (150014)
  File Encoding         : 65001
 
- Date: 29/10/2025 09:39:06
+ Date: 12/02/2026 09:57:44
 */
 
 
@@ -24,7 +24,7 @@ CREATE TABLE "public"."star_log" (
   "id" uuid NOT NULL,
   "level" varchar(10) COLLATE "pg_catalog"."default" NOT NULL,
   "message" text COLLATE "pg_catalog"."default" NOT NULL,
-  "meta" jsonb NOT NULL,
+  "meta" text COLLATE "pg_catalog"."default" NOT NULL,
   "create_time" timestamp(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
   "create_user_id" uuid
 )
