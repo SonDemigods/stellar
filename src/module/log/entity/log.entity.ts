@@ -11,8 +11,8 @@ export class Log {
   @Column({ type: 'text', name: 'message' })
   message: string;
 
-  @Column({ type: 'jsonb', name: 'meta' })
-  meta: Record<string, any>;
+  @Column({ type: 'text', name: 'meta' })
+  meta: string;
 
   @CreateDateColumn({
     type: 'timestamp',

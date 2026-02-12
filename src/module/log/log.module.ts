@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -9,9 +9,11 @@ import { Log } from '@/module/log/entity/log.entity';
 import { LogController } from '@/module/log/log.controller';
 import { LogService } from '@/module/log/log.service';
 
+@Global()
 @Module({
   imports: [TypeOrmModule.forFeature([Log]), ConfigModule],
   controllers: [LogController],
   providers: [LogService],
+  exports: [LogService],
 })
 export class LogModule {}

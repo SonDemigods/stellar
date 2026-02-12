@@ -54,17 +54,12 @@ export class LogService {
   }
 
   // 创建日志
-  async createLog(
-    level: string,
-    message: string,
-    meta?: Record<string, any>,
-  ): Promise<Log> {
+  async createLog(level: string, message: string, meta?: string): Promise<Log> {
     const log = this.logRepository.create({
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
       id: uuidv4(),
       level,
       message,
-      meta: meta || {},
+      meta: meta || '',
     });
     return this.logRepository.save(log);
   }
