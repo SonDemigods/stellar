@@ -5,21 +5,21 @@ import { v4 as uuidv4 } from 'uuid';
 import * as bcrypt from 'bcrypt';
 
 import { User } from './entity/user.entity';
+import { ResponseDto } from '@/common/dto/base.dto';
 import {
   RegisterUserDto,
-  LoginUserDto,
+  LoginRequestDto,
   UpdateUserDto,
   UpdatePasswordDto,
   QueryUserDto,
-  UserResponseDto,
-  UserListResponseDto,
+  UserDataDto,
+  UserPageDataDto,
   LoginResponseDto,
 } from './dto/user.dto';
-import { UserServiceInterface } from './interface/user.interface';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class UserService implements UserServiceInterface {
+export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
@@ -27,9 +27,79 @@ export class UserService implements UserServiceInterface {
   ) {}
 
   /**
+   * 验证用户密码
+   */
+  async verifyPassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(password, hashedPassword);
+  }
+
+  /**
+   * 查询用户列表
+   */
+  async findList(
+    queryUserDto: QueryUserDto,
+  ): Promise<UserPageDataDto | ResponseDto> {
+    const { keyword, pageNum = 1, pageSize = 10 } = queryUserDto;
+
+    const query = this.userRepository
+      .createQueryBuilder('user')
+      .where('user.delete_flag = :deleteFlag', { deleteFlag: 0 });
+
+    if (keyword) {
+      query.andWhere(
+        'user.user_name LIKE :keyword OR user.name LIKE :keyword OR user.phone LIKE :keyword',
+        { keyword: `%${keyword}%` },
+      );
+    }
+
+    const [users, total] = await query
+      .skip((pageNum - 1) * pageSize)
+      .take(pageSize)
+      .getManyAndCount();
+
+    const res = new UserPageDataDto();
+
+    res.list = users;
+    res.current = queryUserDto.pageNum || 1;
+    res.total = total;
+
+    return res;
+  }
+
+  /**
+   * 根据ID查询用户
+   */
+  async findOne(id: string): Promise<UserDataDto | ResponseDto> {
+    const user = await this.userRepository.findOneBy({
+      id,
+      deleteFlag: 0,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: '用户不存在',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    // 不返回密码信息，创建一个不包含密码的新对象
+    const userWithoutPassword = { ...user };
+
+    return userWithoutPassword;
+  }
+
+  /**
    * 用户注册
    */
-  async register(registerUserDto: RegisterUserDto): Promise<UserResponseDto> {
+  async register(
+    registerUserDto: RegisterUserDto,
+  ): Promise<UserDataDto | ResponseDto> {
     // 检查用户名是否已存在
     const existingUser = await this.userRepository.findOneBy({
       userName: registerUserDto.userName,
@@ -68,128 +138,15 @@ export class UserService implements UserServiceInterface {
     // 不返回密码信息，创建一个不包含密码的新对象
     const userWithoutPassword = { ...savedUser };
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: '注册成功',
-      data: userWithoutPassword,
-    };
-  }
-
-  /**
-   * 用户登录
-   */
-  async login(loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
-    // 查找用户
-    const user = await this.userRepository.findOneBy({
-      userName: loginUserDto.userName,
-      deleteFlag: 0,
-    });
-
-    if (!user) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNAUTHORIZED,
-          message: '用户名或密码错误',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    // 验证密码
-    const isValidPassword = await this.verifyPassword(
-      loginUserDto.password,
-      user.password,
-    );
-
-    if (!isValidPassword) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.UNAUTHORIZED,
-          message: '用户名或密码错误',
-        },
-        HttpStatus.UNAUTHORIZED,
-      );
-    }
-
-    // 不返回密码信息
-    const userWithoutPassword = { ...user };
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: '登录成功',
-      user: userWithoutPassword,
-    };
-  }
-
-  /**
-   * 根据ID查询用户
-   */
-  async findOne(id: string): Promise<UserResponseDto> {
-    const user = await this.userRepository.findOneBy({
-      id,
-      deleteFlag: 0,
-    });
-
-    if (!user) {
-      throw new HttpException(
-        {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: '用户不存在',
-        },
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
-    // 不返回密码信息，创建一个不包含密码的新对象
-    const userWithoutPassword = { ...user };
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: '查询成功',
-      data: userWithoutPassword,
-    };
-  }
-
-  /**
-   * 查询用户列表
-   */
-  async findList(queryUserDto: QueryUserDto): Promise<UserListResponseDto> {
-    const { keyword, page = 1, pageSize = 10 } = queryUserDto;
-
-    const query = this.userRepository
-      .createQueryBuilder('user')
-      .where('user.delete_flag = :deleteFlag', { deleteFlag: 0 });
-
-    if (keyword) {
-      query.andWhere(
-        'user.user_name LIKE :keyword OR user.name LIKE :keyword OR user.phone LIKE :keyword',
-        { keyword: `%${keyword}%` },
-      );
-    }
-
-    const [users, total] = await query
-      .skip((page - 1) * pageSize)
-      .take(pageSize)
-      .getManyAndCount();
-
-    // 移除密码信息，直接使用类型转换确保类型匹配
-    const usersWithoutPassword = users.map((user) => {
-      const userCopy = { ...user };
-      return userCopy as User;
-    });
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: '查询成功',
-      list: usersWithoutPassword,
-      total,
-    };
+    return userWithoutPassword;
   }
 
   /**
    * 更新用户信息
    */
-  async update(updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserDataDto | ResponseDto> {
     // 查找用户
     const user = await this.userRepository.findOneBy({
       id: updateUserDto.id,
@@ -222,11 +179,7 @@ export class UserService implements UserServiceInterface {
     // 不返回密码信息，创建一个不包含密码的新对象
     const userWithoutPassword = { ...updatedUser };
 
-    return {
-      statusCode: HttpStatus.OK,
-      message: '更新成功',
-      data: userWithoutPassword,
-    };
+    return userWithoutPassword;
   }
 
   /*
@@ -234,7 +187,7 @@ export class UserService implements UserServiceInterface {
    */
   async updatePassword(
     updatePasswordDto: UpdatePasswordDto,
-  ): Promise<UserResponseDto> {
+  ): Promise<UserDataDto | ResponseDto> {
     // 查找用户
     const user = await this.userRepository.findOneBy({
       id: updatePasswordDto.id,
@@ -279,7 +232,7 @@ export class UserService implements UserServiceInterface {
   /**
    * 删除用户（软删除）
    */
-  async remove(id: string): Promise<UserResponseDto> {
+  async remove(id: string): Promise<UserDataDto | ResponseDto> {
     // 查找用户
     const user = await this.userRepository.findOneBy({
       id,
@@ -310,7 +263,7 @@ export class UserService implements UserServiceInterface {
   }
 
   // 获取当前用户信息
-  async getCurrentUser(): Promise<UserResponseDto> {
+  async getCurrentUser(): Promise<UserDataDto | ResponseDto> {
     // 从token中获取当前用户ID
     const userId = 'current_user'; // 实际应用中应该从token中获取当前用户ID
 
@@ -341,12 +294,49 @@ export class UserService implements UserServiceInterface {
   }
 
   /**
-   * 验证用户密码
+   * 用户登录
    */
-  async verifyPassword(
-    password: string,
-    hashedPassword: string,
-  ): Promise<boolean> {
-    return bcrypt.compare(password, hashedPassword);
+  async login(
+    loginRequestDto: LoginRequestDto,
+  ): Promise<LoginResponseDto | ResponseDto> {
+    // 查找用户
+    const user = await this.userRepository.findOneBy({
+      userName: loginRequestDto.userName,
+      deleteFlag: 0,
+    });
+
+    if (!user) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: '用户名或密码错误',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    // 验证密码
+    const isValidPassword = await this.verifyPassword(
+      loginRequestDto.password,
+      user.password,
+    );
+
+    if (!isValidPassword) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: '用户名或密码错误',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
+    // 不返回密码信息
+    const userWithoutPassword = { ...user };
+
+    return {
+      token: 'token',
+      user: userWithoutPassword,
+    };
   }
 }

@@ -9,22 +9,16 @@ import {
   Query,
   HttpCode,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiParam,
-  ApiBody,
-  ApiResponse,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 
+import { ResponseDto } from '@/common/dto/base.dto';
 import {
   RegisterUserDto,
-  LoginUserDto,
+  LoginRequestDto,
   UpdateUserDto,
   QueryUserDto,
-  UserResponseDto,
-  UserListResponseDto,
+  UserDataDto,
+  UserPageDataDto,
   LoginResponseDto,
 } from './dto/user.dto';
 import { UserService } from './user.service';
@@ -34,35 +28,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @ApiOperation({ summary: '用户注册', description: '创建新用户账号' })
-  @ApiBody({ type: RegisterUserDto })
-  @ApiResponse({ status: 200, type: UserResponseDto })
-  @Post('register')
-  @HttpCode(200)
-  async register(
-    @Body() registerUserDto: RegisterUserDto,
-  ): Promise<UserResponseDto> {
-    return this.userService.register(registerUserDto);
-  }
-
-  @ApiOperation({ summary: '用户登录', description: '用户登录获取访问令牌' })
-  @ApiBody({ type: LoginUserDto })
-  @ApiResponse({ status: 200, type: LoginResponseDto })
-  @Post('login')
-  @HttpCode(200)
-  async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
-    return this.userService.login(loginUserDto);
-  }
-
   @ApiOperation({ summary: '获取用户列表', description: '分页查询用户信息' })
-  @ApiQuery({ name: 'keyword', required: false, description: '搜索关键词' })
-  @ApiQuery({ name: 'page', required: false, description: '页码' })
-  @ApiQuery({ name: 'pageSize', required: false, description: '每页数量' })
-  @ApiResponse({ status: 200, type: UserListResponseDto })
+  @ApiResponse({ status: 200, type: UserPageDataDto })
   @Get()
   async findList(
     @Query() queryUserDto: QueryUserDto,
-  ): Promise<UserListResponseDto> {
+  ): Promise<UserPageDataDto | ResponseDto> {
     return this.userService.findList(queryUserDto);
   }
 
@@ -70,28 +41,50 @@ export class UserController {
     summary: '获取用户详情',
     description: '根据ID获取用户详细信息',
   })
-  @ApiParam({ name: 'id', description: '用户ID' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiResponse({ status: 200, type: UserDataDto })
   @Get(':id')
-  async findOne(@Param('id') id: string): Promise<UserResponseDto> {
+  async findOne(@Param('id') id: string): Promise<UserDataDto | ResponseDto> {
     return this.userService.findOne(id);
   }
 
   @ApiOperation({ summary: '更新用户信息', description: '修改用户信息' })
   @ApiBody({ type: UpdateUserDto })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiResponse({ status: 200, type: UserDataDto })
   @Put()
   @HttpCode(200)
-  async update(@Body() updateUserDto: UpdateUserDto): Promise<UserResponseDto> {
+  async update(
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UserDataDto | ResponseDto> {
     return this.userService.update(updateUserDto);
   }
 
+  @ApiOperation({ summary: '用户注册', description: '创建新用户账号' })
+  @ApiBody({ type: RegisterUserDto })
+  @ApiResponse({ status: 200, type: UserDataDto })
+  @Post('register')
+  @HttpCode(200)
+  async register(
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<UserDataDto | ResponseDto> {
+    return this.userService.register(registerUserDto);
+  }
+
   @ApiOperation({ summary: '删除用户', description: '软删除用户账号' })
-  @ApiParam({ name: 'id', description: '用户ID' })
-  @ApiResponse({ status: 200, type: UserResponseDto })
+  @ApiResponse({ status: 200, type: UserDataDto })
   @Delete(':id')
   @HttpCode(200)
-  async remove(@Param('id') id: string): Promise<UserResponseDto> {
+  async remove(@Param('id') id: string): Promise<UserDataDto | ResponseDto> {
     return this.userService.remove(id);
+  }
+
+  @ApiOperation({ summary: '用户登录', description: '用户登录获取访问令牌' })
+  @ApiBody({ type: LoginRequestDto })
+  @ApiResponse({ status: 200, type: LoginResponseDto })
+  @Post('login')
+  @HttpCode(200)
+  async login(
+    @Body() LoginRequestDto: LoginRequestDto,
+  ): Promise<LoginResponseDto | ResponseDto> {
+    return this.userService.login(LoginRequestDto);
   }
 }
