@@ -26,11 +26,17 @@ export default registerAs('minio', () => {
     bucketName: process.env.MINIO_BUCKET_NAME,
     region: process.env.MINIO_REGION || 'us-east-1',
     secure: process.env.MINIO_SECURE === 'true',
-    fileSizeLimit: process.env.MINIO_FILE_SIZE_LIMIT 
-      ? parseInt(process.env.MINIO_FILE_SIZE_LIMIT, 10) 
+    fileSizeLimit: process.env.MINIO_FILE_SIZE_LIMIT
+      ? parseInt(process.env.MINIO_FILE_SIZE_LIMIT, 10)
       : 50 * 1024 * 1024, // 默认50MB
-    allowedFileTypes: process.env.MINIO_ALLOWED_FILE_TYPES 
-      ? process.env.MINIO_ALLOWED_FILE_TYPES.split(',') 
-      : ['image/jpeg', 'image/png', 'image/gif', 'application/pdf', 'text/plain'],
+    allowedFileTypes: process.env.MINIO_ALLOWED_FILE_TYPES
+      ? process.env.MINIO_ALLOWED_FILE_TYPES.split(',')
+      : [
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'application/pdf',
+          'text/plain',
+        ],
   };
 });
