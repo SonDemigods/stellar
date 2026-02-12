@@ -78,7 +78,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
           // 存储响应日志到数据库
           this.logService
-            .createLog(
+            .create(
               'info',
               `Outgoing Response: ${method} ${url}`,
               JSON.stringify(responseLog),
@@ -112,7 +112,7 @@ export class LoggingInterceptor implements NestInterceptor {
 
           // 存储错误日志到数据库
           this.logService
-            .createLog(
+            .create(
               'error',
               `Request Error: ${method} ${url}`,
               JSON.stringify(errorLog),

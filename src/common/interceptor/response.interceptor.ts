@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Response } from 'express';
 
-import { ResponseDto } from '@common/dto/response.dto';
+import { ResponseDto } from '@/common/dto/base.dto';
 
 // 定义响应数据接口
 interface ResponseData<T> {
