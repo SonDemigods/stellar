@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ResponseDto } from '@common/dto/response.dto';
+import { ResponseDto } from '@/common/dto/base.dto';
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
-  OrganizationTreeResponseDto,
-  OrganizationListResponseDto,
-  OrganizationResponseDto,
+  OrganizationTreeDataDto,
+  OrganizationListDataDto,
+  OrganizationDataDto,
   QueryOrganizationDto,
 } from './dto/organization.dto';
 
@@ -25,7 +25,7 @@ export class OrganizationService {
   private buildTree(
     organizationList: Organization[],
     parentId: string | null,
-  ): OrganizationTreeResponseDto[] {
+  ): OrganizationTreeDataDto[] {
     return organizationList
       .filter((organization) => {
         if (parentId === null) {
@@ -47,7 +47,7 @@ export class OrganizationService {
   }
 
   // 树查询
-  async findTree(): Promise<OrganizationTreeResponseDto[]> {
+  async findTree(): Promise<OrganizationTreeDataDto[]> {
     const organizationList = await this.organizationRepository.find({
       where: {
         deleteFlag: 0,
@@ -61,9 +61,9 @@ export class OrganizationService {
   // 列表查询
   async findList(
     queryOrganizationDto: QueryOrganizationDto,
-  ): Promise<OrganizationListResponseDto | ResponseDto> {
+  ): Promise<OrganizationListDataDto | ResponseDto> {
     const { keyword } = queryOrganizationDto;
-    const res = new OrganizationListResponseDto();
+    const res = new OrganizationListDataDto();
     const [data = [], total = 0] =
       await this.organizationRepository.findAndCount({
         where: {
@@ -78,7 +78,7 @@ export class OrganizationService {
   }
 
   // 根据ID查询
-  async findOne(id: string): Promise<OrganizationResponseDto | ResponseDto> {
+  async findOne(id: string): Promise<OrganizationDataDto | ResponseDto> {
     const organization = await this.organizationRepository.findOneBy({ id });
     if (!organization) {
       throw new HttpException(
@@ -99,7 +99,7 @@ export class OrganizationService {
   // 新增
   async create(
     createOrganizationDto: CreateOrganizationDto,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     const {
       name = '',
       organizationCode = '',
@@ -125,7 +125,7 @@ export class OrganizationService {
   // 更新
   async update(
     updateOrganizationDto: UpdateOrganizationDto,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     const {
       name = '',
       organizationCode = '',
@@ -163,7 +163,7 @@ export class OrganizationService {
   }
 
   // 删除
-  async remove(id: string): Promise<OrganizationResponseDto | ResponseDto> {
+  async remove(id: string): Promise<OrganizationDataDto | ResponseDto> {
     const { affected = 0 } = await this.organizationRepository.delete(id);
     if (affected === 0) {
       throw new HttpException(

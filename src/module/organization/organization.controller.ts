@@ -9,22 +9,16 @@ import {
   Body,
   HttpCode,
 } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiParam,
-  ApiBody,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBody, ApiResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
-import { ResponseDto } from '@common/dto/response.dto';
+import { ResponseDto } from '@/common/dto/base.dto';
 
 import {
   CreateOrganizationDto,
   UpdateOrganizationDto,
-  OrganizationTreeResponseDto,
-  OrganizationListResponseDto,
-  OrganizationResponseDto,
+  OrganizationTreeDataDto,
+  OrganizationListDataDto,
+  OrganizationDataDto,
   QueryOrganizationDto,
 } from './dto/organization.dto';
 import { OrganizationService } from './organization.service';
@@ -41,12 +35,12 @@ export class OrganizationController {
     summary: '获取组织列表或树',
     description: '根据条件查询组织列表，无关键词时返回树形结构',
   })
-  @ApiResponse({ status: 200, type: OrganizationListResponseDto })
+  @ApiResponse({ status: 200, type: OrganizationListDataDto })
   @Get()
   async findAll(
     @Query() queryOrganizationDto: QueryOrganizationDto,
   ): Promise<
-    OrganizationListResponseDto | OrganizationTreeResponseDto[] | ResponseDto
+    OrganizationListDataDto | OrganizationTreeDataDto[] | ResponseDto
   > {
     if (queryOrganizationDto.keyword) {
       return this.organizationService.findList(queryOrganizationDto);
@@ -56,43 +50,41 @@ export class OrganizationController {
   }
 
   @ApiOperation({ summary: '获取单个组织', description: '根据ID获取组织详情' })
-  @ApiParam({ name: 'id', description: '组织ID' })
-  @ApiResponse({ status: 200, type: OrganizationResponseDto })
+  @ApiResponse({ status: 200, type: OrganizationDataDto })
   @Get(':id')
   async findOne(
     @Param('id') id: string,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     return this.organizationService.findOne(id);
   }
 
   @ApiOperation({ summary: '创建组织', description: '添加新的组织信息' })
   @ApiBody({ type: CreateOrganizationDto })
-  @ApiResponse({ status: 200, type: OrganizationResponseDto })
+  @ApiResponse({ status: 200, type: OrganizationDataDto })
   @Post()
   @HttpCode(200)
   async create(
     @Body() createOrganizationDto: CreateOrganizationDto,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     return this.organizationService.create(createOrganizationDto);
   }
 
   @ApiOperation({ summary: '更新组织', description: '更新组织信息' })
   @ApiBody({ type: UpdateOrganizationDto })
-  @ApiResponse({ status: 200, type: OrganizationResponseDto })
+  @ApiResponse({ status: 200, type: OrganizationDataDto })
   @Put()
   async update(
     @Body() updateOrganizationDto: UpdateOrganizationDto,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     return this.organizationService.update(updateOrganizationDto);
   }
 
   @ApiOperation({ summary: '删除组织', description: '根据ID删除组织' })
-  @ApiParam({ name: 'id', description: '组织ID' })
-  @ApiResponse({ status: 200, type: OrganizationResponseDto })
+  @ApiResponse({ status: 200, type: OrganizationDataDto })
   @Delete(':id')
   async remove(
     @Param('id') id: string,
-  ): Promise<OrganizationResponseDto | ResponseDto> {
+  ): Promise<OrganizationDataDto | ResponseDto> {
     return this.organizationService.remove(id);
   }
 }
